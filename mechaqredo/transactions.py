@@ -116,7 +116,7 @@ class BurnFees:
         if model =='distribution' and distr is None:
             raise ValueError("need disitrbution for distribution model")
         if model =='function' and fun is None:
-            raise ValueError("need disitrbution for distribution model")        
+            raise ValueError("need function for function model")        
 
         self.burns_list= [N_trx_constant* protocol_fees]
             
@@ -128,6 +128,7 @@ class BurnFees:
         self.rate = rate
         self.schedule = schedule
         self.distr = distr
+        self.fun=fun
 
     def update(self):
         """
@@ -183,6 +184,8 @@ if __name__=='__main__':
     Bf_po=BurnFees('poisson', protocol_fees=PROTOCOL_FEES,rate=20)
     Bf_l=BurnFees('linear', protocol_fees=PROTOCOL_FEES,rate=0.1)
     Bf_s=BurnFees('scheduled', protocol_fees=PROTOCOL_FEES,schedule=schedule)
+    Bf_f=BurnFees('function', protocol_fees=PROTOCOL_FEES,fun=lambda t: 20+np.cos(t))
+
 
     # simulate the price for 1 year
     for _ in range(T):
@@ -194,6 +197,7 @@ if __name__=='__main__':
         Bf_l.update()
         Bf_po.update()
         Bf_s.update()
+        Bf_f.update()
     
     plt.plot(Af.fees_list,label='OU')
     plt.plot(Af_gbm.fees_list,label='GBM')
@@ -212,6 +216,7 @@ if __name__=='__main__':
     plt.plot(Bf_l.burns_list,label='linear')
     plt.plot(Bf_c.burns_list,label='constant')
     plt.plot(Bf_s.burns_list,label='scheduled')
+    plt.plot(Bf_f.burns_list,label='function')
 
     plt.legend() 
     plt.title('Protocol fees models')
