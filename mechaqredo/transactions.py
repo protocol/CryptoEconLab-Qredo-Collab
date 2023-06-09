@@ -83,29 +83,126 @@ class ServiceFees:
         """
         return self.fees_list[-1]
     
+
+
+class BurnFees:
+    """
+    The BurnFees class is used to model the burn fees of a protocol. 
+    It provides several models to calculate the burn fees.
+    """
+    
+    def __init__(self, model: str, protocol_fees: float,
+                 scheduled: np.ndarray = None,
+                 Bextra: np.ndarray = None,
+                 distr: callable = None,
+                 rate: float = None,
+                 Bf_constant: float = 0.):
+        """
+        Initializes the BurnFees object with a specific model, protocol fees, 
+        schedule, extra burn fees, distribution function, rate, and burn fee constant.
+        """
+        assert model in ['constant', 'linear', 'scheduled', 'poisson', 'distr'], \
+            "Invalid model. Must be 'constant', 'linear', 'scheduled', 'poisson', or 'distr'."
+        
+        if model == 'constant' and Bf_constant is None:
+            raise ValueError("Number of arrivals must be provided for the constant model")
+        if model =='linear' and rate is None:
+            raise ValueError("need rate for linear number of arrivals")
+        if model =='scheduled' and scheduled is None:
+            raise ValueError("need schedule of arrivals for the scheduled model")
+        if model =='poisson' and rate is None:
+            raise ValueError("need rate for the Poisson model")
+        if model =='distribution' and distr is None:
+            raise ValueError("need disitrbution for distribution model")
+        
+
+        self.burns_list= [Bf_constant* protocol_fees]
+            
+        self.protocol_fees = protocol_fees
+        self.model = model
+        self.Bextra_list = Bextra 
+        self.Bfees_list = [0]
+        self.Bf_constant = Bf_constant
+        self.rate = rate
+        self.scheduled = scheduled
+        self.distr = distr
+
+    def update(self):
+        """
+        Updates the service fees based on the chosen model.
+        """
+        if self.Bextra_list is not None:
+        
+            be = self.Bextra_list[len(self.burns_list)-1]
+        else:
+         be=0
+        f=self.protocol_fees
+        if self.model == 'constant':
+            self.Bfees_list.append(f*self.Bf_constant)
+        elif self.model == 'linear':
+            self.Bfees_list.append(f*int(self.rate * len(self.burns_list) + self.burns_list[0]))
+        elif self.model == 'scheduled':
+            self.Bfees_list.append(f*self.scheduled[len(self.burns_list)-1])
+        elif self.model == 'poisson':
+            self.Bfees_list.append(f*np.random.poisson(lam=self.rate))
+        elif self.model == 'distr':
+            self.Bfees_list.append(f*self.distr())
+
+        # Adds both sources
+        self.burns_list.append(be + self.Bfees_list[-1])
+    
+    def current_burns(self):
+        """
+        Returns the current daily service fees.
+        """
+        return self.burns_list[-1]
+
+
     
         
 if __name__=='__main__':
     import matplotlib.pyplot as plt
     plt.rcParams.update({'font.size': 18})
     plt.figure(figsize=(16,9))
+    PROTOCOL_FEES=0.1
     # initialize the price with GBM model
     Af = ServiceFees('ou', A0=100, mu=100,sigma=10,theta=5)
     Af_gbm=ServiceFees('gbm', A0=100, mu=.300,sigma=.10,theta=5)
     Af_l=ServiceFees('linear', A0=100, a=0.05)
+    
+    #
+    Bf_c = BurnFees('constant', protocol_fees=PROTOCOL_FEES,Bf_constant=30)
+    Bf_po=BurnFees('poisson', protocol_fees=PROTOCOL_FEES,rate=20)
+    Bf_l=BurnFees('linear', protocol_fees=PROTOCOL_FEES,rate=0.1)
     # simulate the price for 1 year
     for _ in range(365):
         Af.update()
         Af_gbm.update()
         Af_l.update()
 
+        Bf_c.update()
+        Bf_l.update()
+        Bf_po.update()
+    
     plt.plot(Af.fees_list,label='OU')
     plt.plot(Af_gbm.fees_list,label='GBM')
     plt.plot(Af_l.fees_list,label='linear')
-plt.hlines(100,0,365,label='Initial',color='C3',linestyles='dashed')
-plt.legend() 
-plt.title('Service fees models')
-plt.xlabel('t')
-plt.ylabel('USD')
+    plt.hlines(100,0,365,label='Initial',color='C3',linestyles='dashed')
+    plt.legend() 
+    plt.title('Service fees models')
+    plt.xlabel('t')
+    plt.ylabel('USD')
+    
+    plt.show()
+    
+    plt.figure(figsize=(16,9))
+
+    plt.plot(Bf_po.burns_list,label='Poisson')
+    plt.plot(Bf_l.burns_list,label='linear')
+    plt.plot(Bf_c.burns_list,label='constant')
+    plt.legend() 
+    plt.title('Protocol fees models')
+    plt.xlabel('t')
+    plt.ylabel('QRDO')
     
         
