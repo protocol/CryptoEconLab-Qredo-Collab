@@ -8,29 +8,12 @@ def forecast_service_fee_locked_vec(
     service_fees_vec: np.array,
 ) -> np.array:
     # Forecast locked tokens from Service Fees tipped to the network
-    staking_parms_dict = parms_dict["staking"]
-    tipping_rate = staking_parms_dict["tipping_rate"]
-    slippage = staking_parms_dict["slippage"]
+    tipping_rate = parms_dict["tipping_rate"]
+    slippage = parms_dict["slippage"]
     service_fee_locked_vec = (
         tipping_rate * service_fees_vec * (1 - slippage)
     ) / token_price_vec
     return service_fee_locked_vec
-
-
-def forecast_released_vec(
-    forecast_length: int,
-    parms_dict: dict,
-    burning_vec: np.array,
-    staking_outflows_vec: np.array,
-    ecosystem_fund_initial: float,
-) -> np.array:
-    # Set parameters
-    protocol_funded_rate = parms_dict["staking"]["protocol_funded_rate"]
-    # Get token releases from protocol fees covered by the protocol
-    released_protocol_burn = protocol_funded_rate * burning_vec
-    # Forecast ecosystem fund and token releases from staking rewards
-
-    return None
 
 
 def forecast_staking_rewards_and_ecosystem_fund(

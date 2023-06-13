@@ -29,14 +29,14 @@ def build_model_data_dict(forecast_length: int, params_dict: dict) -> dict:
 
 
 def forecast_daily_trx_counts(forecast_length: int, params_dict: dict) -> np.array:
-    burn_params_dict = params_dict["burning"]
+    model_params_dict = params_dict["ntxs_model"]
     n_txs_model = NumTransactions(
-        burn_params_dict["model"],
-        burn_params_dict["schedule"],
-        burn_params_dict["distr"],
-        burn_params_dict["fun"],
-        burn_params_dict["rate"],
-        burn_params_dict["N_trx_constant"],
+        model_params_dict["model"],
+        model_params_dict["schedule"],
+        model_params_dict["distr"],
+        model_params_dict["fun"],
+        model_params_dict["rate"],
+        model_params_dict["N_trx_constant"],
     )
     for i in range(forecast_length):
         n_txs_model.update()
@@ -45,7 +45,7 @@ def forecast_daily_trx_counts(forecast_length: int, params_dict: dict) -> np.arr
 
 
 def forecast_token_price(forecast_length: int, params_dict: dict) -> np.array:
-    token_params_dict = params_dict["token_price"]
+    token_params_dict = params_dict["token_price_model"]
     price_model = Price(
         token_params_dict["model"],
         token_params_dict["P0"],
@@ -60,7 +60,7 @@ def forecast_token_price(forecast_length: int, params_dict: dict) -> np.array:
 
 
 def forecast_service_fees(forecast_length: int, params_dict: dict) -> np.array:
-    fees_params_dict = params_dict["service_fees"]
+    fees_params_dict = params_dict["service_fees_model"]
     fees_model = ServiceFees(
         fees_params_dict["model"],
         fees_params_dict["A0"],

@@ -7,7 +7,7 @@ from supply import forecast_supply_stats
 
 def run_single_sim(forecast_length: int, input_params_dict: dict) -> pd.DataFrame:
     # Validate input parameters
-    params_dict = validate_params_dict(input_params_dict)
+    params_dict = validate_params_dict(forecast_length, input_params_dict)
     # Build
     data_dict = build_model_data_dict(forecast_length, params_dict)
     # Forecast supplt stats

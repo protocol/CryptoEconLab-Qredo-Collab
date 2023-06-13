@@ -18,9 +18,8 @@ def forecast_supply_stats(
     staking_outflows_vec = data_dict["staking_outflows_vec"]
     n_val_vec = data_dict["n_val_vec"]
     # Forecast burned tokens
-    burn_params_dict = params_dict["burning"]
-    burn_extra_vec = burn_params_dict["burn_extra_vec"]
-    protocol_fee_rate = burn_params_dict["protocol_fee_rate"]
+    burn_extra_vec = params_dict["burn_extra_vec"]
+    protocol_fee_rate = params_dict["protocol_fee_rate"]
     burn_fees_vec = protocol_fee_rate * n_txs_vec
     burned_vec = burn_extra_vec + burn_fees_vec
     # Forecast vested tokens
@@ -33,7 +32,7 @@ def forecast_supply_stats(
     )
     locked_vec = service_fee_locked_vec + staking_inflows_vec
     # Forecast released tokens
-    protocol_funded_rate = params_dict["staking"]["protocol_funded_rate"]
+    protocol_funded_rate = params_dict["protocol_funded_rate"]
     ecosystem_fund_zero = params_dict["ecosystem_fund_zero"]
     #   Get token releases from protocol fees covered by the protocol
     released_protocol_burn_vec = protocol_funded_rate * burned_vec
