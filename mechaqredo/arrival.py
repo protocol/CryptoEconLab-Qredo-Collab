@@ -37,6 +37,7 @@ class Arrival:
         """
         if len(self.arrival_list) == 0:
             num_arrivals = self.initial_number
+            self.arrival_list.append(num_arrivals)
         else:
             if self.list_of_precomputed_arrivals is not None:
                 if len(self.arrival_list) < len(self.list_of_precomputed_arrivals):
@@ -61,8 +62,7 @@ class Arrival:
 
                 if num_arrivals < 1:
                     self.interarrival_times[-1] += 1
-
-        self.arrival_list.append(np.floor(self.arrival_list[-1] + num_arrivals))
+            self.arrival_list.append(np.floor(self.arrival_list[-1] + num_arrivals))
 
         if num_arrivals == 0:
             self.interarrival_times[-1] += 1

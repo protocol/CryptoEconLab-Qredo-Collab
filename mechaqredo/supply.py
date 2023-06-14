@@ -63,6 +63,9 @@ def forecast_supply_stats(
     # Put tofether output dict
     total_staking_rewards_vec = staking_stat_dict["total_staking_rewards_vec"]
     validator_reward_share = params_dict["validator_reward_share"]
+    inflation_vec = np.concatenate(
+        [np.array([np.nan]), np.diff(circ_supply) / circ_supply[:-1]]
+    )
     output_dict = {
         "iteration": np.arange(0, forecast_length, 1),
         "circ_supply": circ_supply,
@@ -72,7 +75,7 @@ def forecast_supply_stats(
         "day_released_vec": released_vec,
         "total_staking_rewards_vec": staking_stat_dict["total_staking_rewards_vec"],
         "validators_rewards_vec": validator_reward_share * total_staking_rewards_vec,
-        "day_inflation": np.diff(circ_supply) / circ_supply[:-1],
+        "day_inflation": inflation_vec,
         "market_cap": circ_supply * token_price_vec,
         "day_burn_fees_vec": burn_fees_vec,
         "day_service_fee_locked_vec": service_fee_locked_vec,

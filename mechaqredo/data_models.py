@@ -14,8 +14,6 @@ def build_model_data_dict(forecast_length: int, params_dict: dict) -> dict:
         "n_txs_vec": n_txs_vec,
         "token_price_vec": token_price_vec,
         "service_fees_vec": service_fees_vec,
-        "staking_inflows_vec": staking_inflows_vec,
-        "staking_outflows_vec": staking_outflows_vec,
         "n_val_vec": n_val_vec,
     }
     return data_dict
@@ -46,7 +44,7 @@ def forecast_token_price(forecast_length: int, params_dict: dict) -> np.array:
         token_params_dict["sigma"],
         token_params_dict["dt"],
     )
-    for i in range(forecast_length):
+    for i in range(forecast_length - 1):
         price_model.update()
     price_vec = np.array(price_model.price_list)
     return price_vec
@@ -63,7 +61,7 @@ def forecast_service_fees(forecast_length: int, params_dict: dict) -> np.array:
         fees_params_dict["dt"],
         fees_params_dict["theta"],
     )
-    for i in range(forecast_length):
+    for i in range(forecast_length - 1):
         fees_model.update()
     fees_vec = np.array(fees_model.fees_list)
     return fees_vec

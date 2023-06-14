@@ -1,6 +1,6 @@
 import pandas as pd
 
-from params import validate_params_dict
+from params import validate_params_dict, default_params_dict
 from data_models import build_model_data_dict
 from supply import forecast_supply_stats
 
@@ -22,3 +22,13 @@ def build_output_dataframe(data_dict: dict, supply_data_dict: dict) -> pd.DataFr
     supply_data_df = pd.DataFrame(supply_data_dict)
     df = pd.concat([supply_data_df, data_df], axis=1)
     return df
+
+
+if __name__ == "__main__":
+    import timeit
+
+    start = timeit.default_timer()
+    df = run_single_sim(365, default_params_dict(365))
+    stop = timeit.default_timer()
+    print("Run time for single sim: ", stop - start)
+    df.to_csv("sim_text.csv")

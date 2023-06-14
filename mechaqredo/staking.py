@@ -38,7 +38,7 @@ def forecast_staking_stats(
         if i >= min_stake_duration:
             available_for_outflow = (
                 available_for_outflow_vec[-1]
-                + staking_inflows[i - min_stake_duration]
+                + staking_inflows_list[i - min_stake_duration]
                 - staking_outflows_list[-1]
             )
         else:
