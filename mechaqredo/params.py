@@ -27,10 +27,17 @@ def default_params_dict(forecast_length: int) -> dict:
         "dt": 1 / 365,
         "theta": None,
     }
+    n_val_model_params_dict = {
+        "rate": 6 / 365,
+        "constant_rate": None,
+        "list_of_precomputed_arrivals": None,
+        "initial_number": 6,
+    }
     params_dict = {
         "ntxs_model": ntxs_model_params_dict,
         "token_price_model": token_model_params_dict,
         "service_fees_model": service_model_params_dict,
+        "n_validators_model": n_val_model_params_dict,
         "burn_extra_vec": np.zeros(forecast_length),
         "protocol_fee_rate": 0.0005,
         "ecosystem_fund_zero": 44423076.0,

@@ -2,6 +2,7 @@ import numpy as np
 
 from transactions import NumTransactions, ServiceFees
 from price import Price
+from arrival import Arrival
 
 
 def build_model_data_dict(forecast_length: int, params_dict: dict) -> dict:
@@ -14,9 +15,7 @@ def build_model_data_dict(forecast_length: int, params_dict: dict) -> dict:
     staking_outflows_vec = np.array(
         [0.0] + [0.5] * (forecast_length - 1)
     )  # TODO: implement staking outflows
-    n_val_vec = (
-        np.arrange(4, 12, 8 / forecast_length).round().astype(int)
-    )  # TODO: implement model for no. of validators
+    n_val_vec = forecast_num_validators(forecast_length, params_dict)
     data_dict = {
         "n_txs_vec": n_txs_vec,
         "token_price_vec": token_price_vec,
@@ -74,3 +73,17 @@ def forecast_service_fees(forecast_length: int, params_dict: dict) -> np.array:
         fees_model.update()
     fees_vec = np.array(fees_model.fees_list)
     return fees_vec
+
+
+def forecast_num_validators(forecast_length: int, params_dict: dict) -> np.array:
+    n_val_params_dict = params_dict["n_validators_model"]
+    n_val_model = Arrival(
+        n_val_params_dict["rate"],
+        n_val_params_dict["constant_rate"],
+        n_val_params_dict["list_of_precomputed_arrivals"],
+        n_val_params_dict["initial_number"],
+    )
+    for i in range(forecast_length):
+        n_val_model.update()
+    n_val_vec = np.array(n_val_model.arrival_list)
+    return n_val_vec
