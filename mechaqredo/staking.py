@@ -1,1 +1,113 @@
-import numpy as npclass staking_in:    def __init__(self, model: str,                 slippage:float=0,                 tipping_rate:float=0,                 reward_locking:float=0,                 initial_staking_fees:float=0,                 initial_staking_stakers:float=0,                 staked_amount_constant:float=None,                 rate:float=None,                 distr:callable=None,                 fun:callable=None):                self.staking_fees_list=[initial_staking_fees]        self.staking_stakers_list=[initial_staking_stakers]        self.staking_in_list=[self.staking_fees_list[-1]+self.staking_stakers_list[-1]]        self.staking_rewards_list=[0]            def update_staking_fees_list(self,serviceFees,Price):        price=Price.current_price()        service_fees=serviceFees.current_fees()        L_in=service_fees*(1-self.slippage)*(self.tipping_rate)/price        self.staking_fees_list.append(L_in)                    def update_staking_rewards_list(self,rewards,relock_rate=None):        if relock_rate is None:            relock_rate=np.random.random()        self.staking_rewards_list.append(relock_rate*rewards)    def update_staking_in_stakers(self):                t=len(self.staking_stakers_list)                if self.model == 'constant':            self.staking_stakers_list.append(self.staked_amount_constant)        elif self.model == 'linear':            self.staking_stakers_list.append((self.rate * t + self.staking_stakers_list[0]))        elif self.model == 'scheduled':            self.staking_stakers_list.append(self.schedule[t])        elif self.model == 'distr':            self.staking_stakers_list.append(self.distr())        elif self.model=='function':            self.staking_stakers_list.append(self.fun(t))                    def update(self,serviceFees,price,rewards,relock_rate):        """        Update the staked model        """                #updates the staking fees        self.update_staking_fees_list(serviceFees,price)        self.update_staking_rewards_list(self,rewards,relock_rate)        self.update_staking_in_stakers(self)                self.staking_in_list=[self.staking_fees_list[-1]+                              self.staking_stakers_list[-1]+                              self.staking_rewards_list[-1]]    def current_locked_in(self):        return self.staking_in_list[-1]        def current_fees(self):        return self.staking_fees_list[-1]        def current_rewards(self):        return self.staking_rewards_list[-1]        def current_stakers(self):        return self.staking_stakers_list[-1]                                            
+import numpy as np
+
+
+def forecast_staking_stats(
+    forecast_length: int,
+    params_dict: dict,
+    n_val_vec: np.array,
+    service_fee_locked_vec: np.array,
+    released_protocol_burn_vec: np.array,
+    staking_vesting_rewards_vec: np.array,
+) -> dict:
+    # Get params and data
+    rewards_reinvest_rate = params_dict["rewards_reinvest_rate"]
+    staking_renewal_rate = params_dict["staking_renewal_rate"]
+    staker_reward_share = 1 - params_dict["validator_reward_share"]
+    min_stake_duration = params_dict["min_stake_duration"]
+    new_staker_inflow_vec = forecast_new_staker_inflow_vec(forecast_length, params_dict)
+    # Initialise variables
+    initial_staking_value = compute_initial_staking_value(params_dict)
+    staking_inflows_list = [initial_staking_value]
+    staking_outflows_list = [0.0]
+    staking_tvl_list = [initial_staking_value]
+    ecosystem_fund_list = [params_dict["ecosystem_fund_zero"]]
+    staking_released_rewards_list = [0.0]
+    total_staking_rewards_list = [0.0]
+    available_for_outflow_vec = [0.0]
+    # Run for loop
+    for i in range(1, forecast_length):
+        # Compute staking inflows
+        stakers_previous_rewards = (
+            staker_reward_share * total_staking_rewards_list[i - 1]
+        )
+        new_staker_inflow = new_staker_inflow_vec[i]
+        staking_inflows = (
+            rewards_reinvest_rate * stakers_previous_rewards + new_staker_inflow
+        )
+        # Compute staking outflows
+        if i >= min_stake_duration:
+            available_for_outflow = (
+                available_for_outflow_vec[-1]
+                + staking_inflows[i - min_stake_duration]
+                - staking_outflows_list[-1]
+            )
+        else:
+            available_for_outflow = 0.0
+        staking_outflows = (1 - staking_renewal_rate) * available_for_outflow
+        # Update flow lists
+        available_for_outflow_vec.append(available_for_outflow)
+        staking_inflows_list.append(staking_inflows)
+        staking_outflows_list.append(staking_outflows)
+        staking_tvl = staking_tvl_list[-1] + staking_inflows - staking_outflows
+        staking_tvl_list.append(staking_tvl)
+        # Compute reward distribution
+        release_rate = release_rate_function(staking_tvl, n_val_vec[i])
+        staking_released_rewards = release_rate * ecosystem_fund_list[i - 1]
+        total_staking_rewards = (
+            staking_released_rewards + staking_vesting_rewards_vec[i]
+        )
+        staking_released_rewards_list.append(staking_released_rewards)
+        total_staking_rewards_list.append(total_staking_rewards)
+        # Update ecosystem fund value
+        ecosystem_fund = (
+            ecosystem_fund_list[-1]
+            + service_fee_locked_vec[i]
+            - released_protocol_burn_vec[i]
+            - staking_released_rewards
+        )
+        ecosystem_fund_list.append(ecosystem_fund)
+    # Build output dict
+    staking_stat_dict = {
+        "staking_inflows_vec": np.array(staking_inflows_list),
+        "staking_outflows_vec": np.array(staking_outflows_list),
+        "staking_released_rewards_vec": np.array(staking_released_rewards_list),
+        "total_staking_rewards_vec": np.array(total_staking_rewards_list),
+        "ecosystem_fund_vec": np.array(ecosystem_fund_list),
+        "staking_tvl": np.array(staking_tvl_list),
+    }
+    return staking_stat_dict
+
+    ### OLD
+
+    # Forecast released tokens
+
+    #  Bring all together
+
+
+def compute_initial_staking_value(params_dict: dict) -> float:
+    wallet_balances_vec = params_dict["wallet_balances_vec"]
+    min_stake_amount = params_dict["min_stake_amount"]
+    initial_stake_convertion_rate = params_dict["initial_stake_convertion_rate"]
+    available_wallet_balances_vec = wallet_balances_vec[
+        wallet_balances_vec >= min_stake_amount
+    ]
+    available_stake = sum(available_wallet_balances_vec)
+    initial_stake = initial_stake_convertion_rate * available_stake
+    return initial_stake
+
+
+def release_rate_function(tvl: float, n_val: int) -> float:
+    # TODO: design release rate function with tunnable parameters
+    return 0.1
+
+
+def forecast_new_staker_inflow_vec(forecast_length: int, params_dict: dict) -> np.array:
+    model = params_dict["new_staker_inflow_model"]["model"]
+    init_stake_amt = params_dict["new_staker_inflow_model"]["init_stake_amt"]
+    rate = params_dict["new_staker_inflow_model"]["rate"]
+    if model == "constant":
+        return np.array([init_stake_amt] * forecast_length)
+    elif model == "linear":
+        return np.aaray([rate * t + init_stake_amt for t in range(forecast_length)])
+    else:
+        raise ValueError("Model provided is not valid")

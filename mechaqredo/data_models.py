@@ -9,12 +9,6 @@ def build_model_data_dict(forecast_length: int, params_dict: dict) -> dict:
     n_txs_vec = forecast_daily_trx_counts(forecast_length, params_dict)
     token_price_vec = forecast_token_price(forecast_length, params_dict)
     service_fees_vec = forecast_service_fees(forecast_length, params_dict)
-    staking_inflows_vec = np.array(
-        [1.0] * forecast_length
-    )  # TODO: implement staking inflows
-    staking_outflows_vec = np.array(
-        [0.0] + [0.5] * (forecast_length - 1)
-    )  # TODO: implement staking outflows
     n_val_vec = forecast_num_validators(forecast_length, params_dict)
     data_dict = {
         "n_txs_vec": n_txs_vec,

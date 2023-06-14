@@ -33,18 +33,31 @@ def default_params_dict(forecast_length: int) -> dict:
         "list_of_precomputed_arrivals": None,
         "initial_number": 6,
     }
+    new_staker_inflow_params_dict = {
+        "model": "constant",
+        "init_stake_amt": 1000.0,
+        "rate": None,
+    }
     params_dict = {
         "ntxs_model": ntxs_model_params_dict,
         "token_price_model": token_model_params_dict,
         "service_fees_model": service_model_params_dict,
         "n_validators_model": n_val_model_params_dict,
+        "new_staker_inflow_model": new_staker_inflow_params_dict,
         "burn_extra_vec": np.zeros(forecast_length),
-        "protocol_fee_rate": 0.0005,
+        "wallet_balances_vec": np.array([1000.0, 500.0]),  # Fix this!!!!
         "ecosystem_fund_zero": 44423076.0,
         "circ_supply_zero": 260000000.0,
+        "protocol_fee_rate": 0.0005,
         "slippage": 0.005,
         "tipping_rate": 0.3,
         "protocol_funded_rate": 0.5,
+        "min_stake_amount": 1.0,
+        "min_stake_duration": 14,
+        "initial_stake_convertion_rate": 0.7,
+        "rewards_reinvest_rate": 0.5,
+        "staking_renewal_rate": 0.8,
+        "validator_reward_share": 0.5,
     }
     return params_dict
 
