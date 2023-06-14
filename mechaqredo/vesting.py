@@ -32,7 +32,7 @@ def build_linear_vesting_vec(
         fund_spec_dict = fund_params_dict[fund_name]
         fund_vesting_vec = linear_vest(forecast_length, sim_start, fund_spec_dict)
         known_vest_vec += fund_vesting_vec
-    return known_vest_vec  #
+    return known_vest_vec
 
 
 def linear_vest(
@@ -46,5 +46,6 @@ def linear_vest(
     vesting_days = (vest_end_date - sim_start).days
     vest_vec = np.zeros(forecast_length, dtype=float)
     for i in range(vesting_days, 0, -vest_period_days):
-        vest_vec[i] = vest_amount
+        if i < forecast_length:
+            vest_vec[i] = vest_amount
     return vest_vec
