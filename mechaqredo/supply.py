@@ -1,6 +1,9 @@
 import numpy as np
 
-from vesting import forecast_vested_vec
+from vesting import (
+    forecast_vested_vec_from_previous_allocation,
+    forecast_vested_vec_from_staking,
+)
 from staking import forecast_staking_stats
 from locking import forecast_service_fee_locked_vec
 
@@ -19,10 +22,13 @@ def forecast_supply_stats(
     burn_fees_vec = protocol_fee_rate * n_txs_vec
     burned_vec = burn_extra_vec + burn_fees_vec
     # Forecast vested tokens
-    vested_vec = forecast_vested_vec(forecast_length, params_dict)
-    staking_vesting_rewards_vec = (
-        0.2 * vested_vec
-    )  # TODO: implement staking rewards vesting
+    vested_vec_from_previous = forecast_vested_vec_from_previous_allocation(
+        forecast_length, params_dict
+    )
+    vested_vec_from_staking = forecast_vested_vec_from_staking(
+        forecast_length, params_dict
+    )
+    vested_vec = vested_vec_from_previous + vested_vec_from_staking
     # Forecast locked tokens from service fees
     service_fee_locked_vec = forecast_service_fee_locked_vec(
         params_dict,
@@ -39,7 +45,7 @@ def forecast_supply_stats(
         n_val_vec,
         service_fee_locked_vec,
         released_protocol_burn_vec,
-        staking_vesting_rewards_vec,
+        vested_vec_from_staking,
     )
     staking_inflows_vec = staking_stat_dict["staking_inflows_vec"]
     staking_outflows_vec = staking_stat_dict["staking_outflows_vec"]
@@ -52,7 +58,11 @@ def forecast_supply_stats(
         released_protocol_burn_vec + staking_released_rewards_vec + staking_outflows_vec
     )
     # Compute circulating supply
-    circ_supply_zero = params_dict["circ_supply_zero"]
+    circ_supply_zero = (
+        params_dict["circ_supply_zero"]
+        + params_dict["public_goods_fund_size"]
+        + params_dict["treasury_refresh_size"]
+    )
     circ_supply = (
         circ_supply_zero
         - burned_vec.cumsum()
@@ -73,6 +83,7 @@ def forecast_supply_stats(
         "day_vested_vec": vested_vec,
         "day_locked_vec": locked_vec,
         "day_released_vec": released_vec,
+        "vested_vec_from_staking": vested_vec_from_staking,
         "total_staking_rewards_vec": staking_stat_dict["total_staking_rewards_vec"],
         "validators_rewards_vec": validator_reward_share * total_staking_rewards_vec,
         "day_inflation": inflation_vec,
