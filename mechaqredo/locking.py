@@ -1,5 +1,4 @@
 import numpy as np
-from typing import Tuple
 
 
 def forecast_service_fee_locked_vec(

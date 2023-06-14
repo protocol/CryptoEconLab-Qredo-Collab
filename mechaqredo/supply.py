@@ -1,11 +1,11 @@
 import numpy as np
 
-from vesting import (
+from .vesting import (
     forecast_vested_vec_from_previous_allocation,
     forecast_vested_vec_from_staking,
 )
-from staking import forecast_staking_stats
-from locking import forecast_service_fee_locked_vec
+from .staking import forecast_staking_stats
+from .locking import forecast_service_fee_locked_vec
 
 
 def forecast_supply_stats(

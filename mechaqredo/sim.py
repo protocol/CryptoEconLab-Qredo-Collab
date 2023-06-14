@@ -1,8 +1,8 @@
 import pandas as pd
 
-from params import validate_params_dict, default_params_dict
-from data_models import build_model_data_dict
-from supply import forecast_supply_stats
+from .params import validate_params_dict, default_params_dict
+from .data_models import build_model_data_dict
+from .supply import forecast_supply_stats
 
 
 def run_single_sim(forecast_length: int, input_params_dict: dict) -> pd.DataFrame:

@@ -1,8 +1,8 @@
 import numpy as np
 
-from transactions import NumTransactions, ServiceFees
-from price import Price
-from arrival import Arrival
+from .transactions import NumTransactions, ServiceFees
+from .price import Price
+from .arrival import Arrival
 
 
 def build_model_data_dict(forecast_length: int, params_dict: dict) -> dict:

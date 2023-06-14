@@ -77,12 +77,6 @@ def forecast_staking_stats(
     }
     return staking_stat_dict
 
-    ### OLD
-
-    # Forecast released tokens
-
-    #  Bring all together
-
 
 def compute_initial_staking_value(params_dict: dict) -> float:
     wallet_balances_vec = params_dict["wallet_balances_vec"]

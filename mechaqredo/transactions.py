@@ -8,7 +8,6 @@ Created on Wed Jun  7 21:57:54 2023
 """
 
 import numpy as np
-import pandas as pd
 
 
 class ServiceFees:
