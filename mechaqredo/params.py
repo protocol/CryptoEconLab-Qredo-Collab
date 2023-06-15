@@ -21,7 +21,7 @@ def default_params_dict(forecast_length: int) -> dict:
     }
     service_model_params_dict = {
         "model": "constant",
-        "A0": 25_000_000.0,
+        "A0": 3_000.0,
         "a": None,
         "mu": None,
         "sigma": None,
