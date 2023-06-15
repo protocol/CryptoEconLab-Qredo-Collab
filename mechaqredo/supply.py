@@ -73,7 +73,7 @@ def forecast_supply_stats(
         - locked_vec.cumsum()
         + released_vec.cumsum()
     )
-    # Put tofether output dict
+    # Put together output dict
     total_staking_rewards_vec = staking_stat_dict["total_staking_rewards_vec"]
     validator_reward_share = params_dict["validator_reward_share"]
     inflation_vec = np.concatenate(

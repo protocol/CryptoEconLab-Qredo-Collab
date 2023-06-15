@@ -92,6 +92,12 @@ def default_params_dict(forecast_length: int) -> dict:
         "staking_rewards_vesting_decay_rate": np.log(2) / (4.0 * 365),  # 4yrs half-life
         "treasury_refresh_size": 250_000_000,  # the "development fund"
         "burn_extra_vec": np.array([350_000_000] + [0] * (forecast_length - 1)),
+        # release rate params
+        "release_rate_a":2,
+        "release_rate_b":2,
+        "max_validators":20,
+        "max_TVL":0.5e9,
+        "release_rate_function_type":'fractional_convex'
     }
     return params_dict
 

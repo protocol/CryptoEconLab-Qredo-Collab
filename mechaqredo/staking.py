@@ -51,7 +51,11 @@ def forecast_staking_stats(
         staking_tvl = staking_tvl_list[-1] + staking_inflows - staking_outflows
         staking_tvl_list.append(staking_tvl)
         # Compute reward distribution
-        release_rate = release_rate_function(staking_tvl, n_val_vec[i])
+        
+        
+        
+        release_rate = release_rate_function(staking_tvl, n_val_vec[i],params_dict)
+        
         staking_released_rewards = release_rate * ecosystem_fund_list[i - 1]
         total_staking_rewards = (
             staking_released_rewards + staking_vesting_rewards_vec[i]
@@ -90,9 +94,29 @@ def compute_initial_staking_value(params_dict: dict) -> float:
     return initial_stake
 
 
-def release_rate_function(tvl: float, n_val: int) -> float:
-    # TODO: design release rate function with tunnable parameters
-    return 0.1
+def release_rate_function(tvl: float, n_val: int, params_dict:dict) -> float:
+    
+    function_type=params_dict['release_rate_function_type']
+    a=params_dict['release_rate_a']
+    b=params_dict['release_rate_b']
+    V_max=params_dict['max_validators']
+    T_max=params_dict['max_TVL']
+    
+    
+    
+    if function_type=='linear':
+        r=a*tvl/T_max + (1-a)*n_val/V_max  
+    elif function_type=='sigmoid':
+        r=2*(1/(1+np.exp(-a*tvl-b*n_val))-0.5)*(tvl>0)*(n_val>0)
+    elif function_type=='fractional':
+        r=(tvl**a + b*n_val**a) / (T_max**a + b*V_max**a)
+    elif function_type=='fractional_convex':
+        term1 = (tvl / T_max) ** a
+        term2 = (n_val / V_max) ** b
+        r = 0.5 * term1 + 0.5 * term2
+
+
+    return r
 
 
 def forecast_new_staker_inflow_vec(forecast_length: int, params_dict: dict) -> np.array:
