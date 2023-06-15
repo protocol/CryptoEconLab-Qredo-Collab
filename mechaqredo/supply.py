@@ -28,7 +28,13 @@ def forecast_supply_stats(
     vested_vec_from_staking = forecast_vested_vec_from_staking(
         forecast_length, params_dict
     )
-    vested_vec = vested_vec_from_previous + vested_vec_from_staking
+    acc_vest_vec = np.zeros(forecast_length, dtype="float")
+    acc_vest_vec[0] = (
+        params_dict["ecosystem_fund_to_vest_zero"]
+        + params_dict["public_goods_fund_size"]
+        + params_dict["treasury_refresh_size"]
+    )
+    vested_vec = vested_vec_from_previous + vested_vec_from_staking + acc_vest_vec
     # Forecast locked tokens from service fees
     service_fee_locked_vec = forecast_service_fee_locked_vec(
         params_dict,
@@ -52,19 +58,16 @@ def forecast_supply_stats(
     staking_released_rewards_vec = staking_stat_dict["staking_released_rewards_vec"]
     ecosystem_fund_vec = staking_stat_dict["ecosystem_fund_vec"]
     # Compute total locked tokens
-    locked_vec = service_fee_locked_vec + staking_inflows_vec
+    ecosystem_lock_vec = np.zeros(forecast_length, dtype="float")
+    ecosystem_lock_vec[0] = params_dict["ecosystem_fund_zero"]
+    locked_vec = service_fee_locked_vec + staking_inflows_vec + ecosystem_lock_vec
     # Compute total released tokens
     released_vec = (
         released_protocol_burn_vec + staking_released_rewards_vec + staking_outflows_vec
     )
     # Compute circulating supply
-    circ_supply_zero = (
-        params_dict["circ_supply_zero"]
-        + params_dict["public_goods_fund_size"]
-        + params_dict["treasury_refresh_size"]
-    )
     circ_supply = (
-        circ_supply_zero
+        params_dict["circ_supply_zero"]
         - burned_vec.cumsum()
         + vested_vec.cumsum()
         - locked_vec.cumsum()

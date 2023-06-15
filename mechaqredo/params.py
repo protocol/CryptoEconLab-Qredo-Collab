@@ -63,25 +63,30 @@ def default_params_dict(forecast_length: int) -> dict:
     }
     params_dict = {
         "sim_start_datetime": dt.datetime(2023, 7, 15),
+        # User model params
         "ntxs_model": ntxs_model_params_dict,
         "token_price_model": token_model_params_dict,
         "service_fees_model": service_model_params_dict,
         "n_validators_model": n_val_model_params_dict,
         "new_staker_inflow_model": new_staker_inflow_params_dict,
+        # Data params
         "previous_funds_vesting_spec": previous_funds_params_dict,
         "wallet_balances_vec": np.array([1000.0, 500.0]),  # Fix this!!!!
         "circ_supply_zero": 260_000_000.0,
-        "protocol_fee_rate": 0.0005,
-        "slippage": 0.005,
-        "tipping_rate": 0.3,
+        "ecosystem_fund_zero": 110_000_000.0,  # we are assuming this fund gets an accelerated vesting!
+        "ecosystem_fund_to_vest_zero": 65_000_000.0,  # Fix this!!!!
+        # User behavior params
         "protocol_funded_rate": 0.5,
-        "min_stake_amount": 1.0,
-        "min_stake_duration": 14,
         "initial_stake_convertion_rate": 0.7,
         "rewards_reinvest_rate": 0.5,
         "staking_renewal_rate": 0.8,
+        "slippage": 0.005,
+        # Tokenomic params:
+        "tipping_rate": 0.3,
+        "protocol_fee_rate": 0.0005,
+        "min_stake_amount": 1.0,
+        "min_stake_duration": 14,
         "validator_reward_share": 0.5,
-        "ecosystem_fund_zero": 110_000_000.0,  # we are assuming this fund gets an accelerated vesting!
         "public_goods_fund_size": 200_000_000,
         "staking_rewards_fund_size": 200_000_000,
         "staking_rewards_vesting_decay_rate": np.log(2) / (4.0 * 365),  # 4yrs half-life
