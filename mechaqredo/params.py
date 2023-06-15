@@ -71,10 +71,10 @@ def default_params_dict(forecast_length: int) -> dict:
         "new_staker_inflow_model": new_staker_inflow_params_dict,
         # Data params
         "previous_funds_vesting_spec": previous_funds_params_dict,
-        "wallet_balances_vec": np.array([1000.0, 500.0]),  # Fix this!!!!
+        "wallet_balances_vec": np.array([95_000_000.0]),
         "circ_supply_zero": 260_000_000.0,
         "ecosystem_fund_zero": 110_000_000.0,  # we are assuming this fund gets an accelerated vesting!
-        "ecosystem_fund_to_vest_zero": 65_000_000.0,  # Fix this!!!!
+        "ecosystem_fund_to_vest_zero": 65_000_000.0,
         # User behavior params
         "protocol_funded_rate": 0.5,
         "initial_stake_convertion_rate": 0.7,
