@@ -61,6 +61,13 @@ def default_params_dict(forecast_length: int) -> dict:
             "vest_amount": 161_596.15,
         },
     }
+    release_rate_params_dict = {
+        "release_rate_a": 2,
+        "release_rate_b": 2,
+        "max_validators": 200,
+        "max_TVL": 2e9,
+        "release_rate_function_type": "fractional_convex",
+    }
     params_dict = {
         "sim_start_datetime": dt.datetime(2023, 7, 15),
         # User model params
@@ -92,12 +99,7 @@ def default_params_dict(forecast_length: int) -> dict:
         "staking_rewards_vesting_decay_rate": np.log(2) / (4.0 * 365),  # 4yrs half-life
         "treasury_refresh_size": 250_000_000,  # the "development fund"
         "burn_extra_vec": np.array([350_000_000] + [0] * (forecast_length - 1)),
-        # release rate params
-        "release_rate_a":2,
-        "release_rate_b":2,
-        "max_validators":20,
-        "max_TVL":0.5e9,
-        "release_rate_function_type":'fractional_convex'
+        "release_rate_function": release_rate_params_dict,
     }
     return params_dict
 
