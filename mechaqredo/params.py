@@ -79,9 +79,9 @@ def default_params_dict(forecast_length: int) -> dict:
         # Data params
         "previous_funds_vesting_spec": previous_funds_params_dict,
         "wallet_balances_vec": np.array([95_000_000.0]),
-        "circ_supply_zero": 260_000_000.0,
+        "circ_supply_zero": 360_000_000.0,
         "ecosystem_fund_zero": 110_000_000.0,  # we are assuming this fund gets an accelerated vesting!
-        "ecosystem_fund_to_vest_zero": 65_000_000.0,
+        "ecosystem_fund_to_vest_zero": 55_000_000.0,
         # User behavior params
         "protocol_funded_rate": 0.5,
         "initial_stake_convertion_rate": 0.7,
@@ -94,12 +94,13 @@ def default_params_dict(forecast_length: int) -> dict:
         "min_stake_amount": 1.0,
         "min_stake_duration": 14,
         "validator_reward_share": 0.5,
+        "staking_rewards_vesting_decay_rate": np.log(2) / (4.0 * 365),  # 4yrs half-life
+        "release_rate_function": release_rate_params_dict,
+        # Tokenomic params to check later
         "public_goods_fund_size": 200_000_000,
         "staking_rewards_fund_size": 200_000_000,
-        "staking_rewards_vesting_decay_rate": np.log(2) / (4.0 * 365),  # 4yrs half-life
         "treasury_refresh_size": 250_000_000,  # the "development fund"
         "burn_extra_vec": np.array([350_000_000] + [0] * (forecast_length - 1)),
-        "release_rate_function": release_rate_params_dict,
     }
     return params_dict
 

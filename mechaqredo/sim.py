@@ -78,4 +78,3 @@ if __name__ == "__main__":
     df = run_single_sim(365, default_params_dict(365))
     stop = timeit.default_timer()
     print("Run time for single sim: ", stop - start)
-    df.to_csv("sim_text.csv")

@@ -12,10 +12,10 @@ def build_model_data_dict(forecast_length: int, params_dict: dict) -> dict:
     service_fees_vec = forecast_service_fees(forecast_length, params_dict)
     n_val_vec = forecast_num_validators(forecast_length, params_dict)
     data_dict = {
-        "n_txs_vec": n_txs_vec,
-        "token_price_vec": token_price_vec,
-        "service_fees_vec": service_fees_vec,
-        "n_val_vec": n_val_vec,
+        "n_txs": n_txs_vec,
+        "token_price": token_price_vec,
+        "service_fees": service_fees_vec,
+        "n_validators": n_val_vec,
     }
     return data_dict
 

@@ -12,10 +12,10 @@ def forecast_supply_stats(
     forecast_length: int, params_dict: dict, data_dict: dict
 ) -> dict:
     # Get inputs from data dict
-    n_txs_vec = data_dict["n_txs_vec"]
-    token_price_vec = data_dict["token_price_vec"]
-    service_fees_vec = data_dict["service_fees_vec"]
-    n_val_vec = data_dict["n_val_vec"]
+    n_txs_vec = data_dict["n_txs"]
+    token_price_vec = data_dict["token_price"]
+    service_fees_vec = data_dict["service_fees"]
+    n_val_vec = data_dict["n_validators"]
     # Forecast burned tokens
     burn_extra_vec = params_dict["burn_extra_vec"]
     protocol_fee_rate = params_dict["protocol_fee_rate"]
@@ -76,25 +76,22 @@ def forecast_supply_stats(
     # Put together output dict
     total_staking_rewards_vec = staking_stat_dict["total_staking_rewards_vec"]
     validator_reward_share = params_dict["validator_reward_share"]
-    day_inflation_vec = np.concatenate(
-        [np.array([np.nan]), np.diff(circ_supply) / circ_supply[:-1]]
-    )
-    year_inflation_vec = np.concatenate(
-        [np.array([np.nan] * 365), np.diff(circ_supply, n=365) / circ_supply[:-365]]
-    )
     output_dict = {
         "iteration": np.arange(0, forecast_length, 1),
         "circ_supply": circ_supply,
-        "day_burned_vec": burned_vec,
-        "day_vested_vec": vested_vec,
-        "day_locked_vec": locked_vec,
-        "day_released_vec": released_vec,
-        "vested_vec_from_staking": vested_vec_from_staking,
-        "total_staking_rewards_vec": staking_stat_dict["total_staking_rewards_vec"],
-        "validators_rewards_vec": validator_reward_share * total_staking_rewards_vec,
+        "day_burned": burned_vec,
+        "day_vested": vested_vec,
+        "day_locked": locked_vec,
+        "day_released": released_vec,
+        "staking_rewards_vested": vested_vec_from_staking,
+        "staking_rewards_ecosystem": staking_stat_dict["total_staking_rewards_vec"]
+        - vested_vec_from_staking,
+        "total_staking_rewards": staking_stat_dict["total_staking_rewards_vec"],
+        "validators_rewards": validator_reward_share * total_staking_rewards_vec,
         "market_cap": circ_supply * token_price_vec,
-        "day_burn_fees_vec": burn_fees_vec,
-        "day_service_fee_locked_vec": service_fee_locked_vec,
-        "ecosystem_fund_vec": ecosystem_fund_vec,
+        "day_burn_fees": burn_fees_vec,
+        "day_service_fee_locked": service_fee_locked_vec,
+        "ecosystem_fund": ecosystem_fund_vec,
+        "staking_tvl": staking_stat_dict["staking_tvl"],
     }
     return output_dict
