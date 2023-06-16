@@ -1,4 +1,5 @@
 import numpy as np
+from typing import List
 
 from .transactions import NumTransactions, ServiceFees
 from .price import Price
@@ -17,6 +18,16 @@ def build_model_data_dict(forecast_length: int, params_dict: dict) -> dict:
         "n_val_vec": n_val_vec,
     }
     return data_dict
+
+
+def build_model_data_dict_samples(
+    n_samples: int, forecast_length: int, params_dict: dict
+) -> List[dict]:
+    data_dict_list = []
+    for _ in range(n_samples):
+        data_dict = build_model_data_dict(forecast_length, params_dict)
+        data_dict_list.append(data_dict)
+    return data_dict_list
 
 
 def forecast_daily_trx_counts(forecast_length: int, params_dict: dict) -> np.array:
