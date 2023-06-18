@@ -13,7 +13,7 @@ class Arrival:
         rate: int = None,
         constant_rate: float = None,
         list_of_precomputed_arrivals: np.ndarray = None,
-        initial_number: int = 0,
+        initial_number: int = 0
     ):
         """
         Constructor of the Arrival class.
@@ -30,6 +30,7 @@ class Arrival:
         self.arrival_list = []
         self.interarrival_times = [0]
         self.counter = 0
+        
 
     def update(self):
         """
@@ -85,7 +86,7 @@ if __name__ == "__main__":
     precomputed_arrivals = [0 if np.random.random() < 0.7 else 1 for _ in range(365)]
 
     # Initialize the arrival process with a Poisson rate
-    a1 = Arrival(rate=1 / 5)
+    a1 = Arrival(rate=1/100)
     # Initialize the arrival process with a constant rate
     a2 = Arrival(constant_rate=1 / 7)
     # Initialize the arrival process with a vector of arrivals

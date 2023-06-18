@@ -23,7 +23,7 @@ def default_params_dict(forecast_length: int) -> dict:
         "model": "constant",
         "A0": 3_000.0,
         "a": None,
-        "mu": None,
+        "drift": None,
         "sigma": None,
         "dt": 1 / 365,
         "theta": None,

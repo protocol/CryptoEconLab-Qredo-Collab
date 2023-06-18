@@ -16,7 +16,7 @@ class ServiceFees:
         model: str,
         A0: float,
         a: float = None,
-        mu: float = None,
+        drift: float = None,
         sigma: float = None,
         dt: float = 1 / 365,
         theta: float = None,
@@ -28,7 +28,7 @@ class ServiceFees:
             Here 'gbm' stands for Geometric Brownian Motion and 'ou' stands for Orhnstein-Uhllenbeck.
         A0: The initial daily service fees.
         a: The daily rate of growth in service fees (required for 'linear' model).
-        mu: The expected return of the service fees (required for 'gbm' model) OR expected service fees in OU process.
+        drift: The expected return of the service fees (required for 'gbm' model) OR expected service fees in OU process.
         sigma: The standard deviation of the service fees returns (required for 'gbm' model).
         dt: The time step size.
         theta: ???
@@ -36,15 +36,15 @@ class ServiceFees:
         # TODO: add description for the theta input
         if model == "linear" and a is None:
             raise ValueError("Growth rate 'a' must be provided for the linear model")
-        if model == "gbm" and (mu is None or sigma is None):
-            raise ValueError("Mu and sigma must be provided for the GBM model")
-        if model == "ou" and (mu is None or sigma is None or theta is None):
+        if model == "gbm" and (drift is None or sigma is None):
+            raise ValueError("drift and sigma must be provided for the GBM model")
+        if model == "ou" and (drift is None or sigma is None or theta is None):
             raise ValueError(
                 "Order and data must be provided for the OU model"
             )  # TODO: fix this warning!
         self.model = model
         self.a = a
-        self.mu = mu
+        self.drift = drift
         self.sigma = sigma
         self.fees_list = [A0]
         self.dt = dt
@@ -68,7 +68,7 @@ class ServiceFees:
         Calculate the next service fee using the Geometric Brownian Motion model.
         """
         A0 = self.fees_list[-1]
-        drift = (self.mu - 0.5 * self.sigma**2.0) * self.dt
+        drift = (self.drift - 0.5 * self.sigma**2.0) * self.dt
         vol = self.dt**0.5 * self.sigma * np.random.standard_normal()
         return A0 * np.exp(drift + vol)
 
@@ -79,7 +79,7 @@ class ServiceFees:
         x0 = self.fees_list[-1]
         x1 = (
             x0
-            + self.dt * (self.theta * (self.mu - x0))
+            + self.dt * (self.theta * (self.drift - x0))
             + self.sigma * self.dt**0.5 * np.random.standard_normal()
         )
         return x1

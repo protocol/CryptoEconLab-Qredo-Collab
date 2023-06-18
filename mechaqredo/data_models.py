@@ -67,7 +67,7 @@ def forecast_service_fees(forecast_length: int, params_dict: dict) -> np.array:
         fees_params_dict["model"],
         fees_params_dict["A0"],
         fees_params_dict["a"],
-        fees_params_dict["mu"],
+        fees_params_dict["drift"],
         fees_params_dict["sigma"],
         fees_params_dict["dt"],
         fees_params_dict["theta"],
