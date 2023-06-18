@@ -1,6 +1,6 @@
 import numpy as np
 import datetime as dt
-
+import yfinance as yf
 
 def default_params_dict(forecast_length: int) -> dict:
     # TODO: confirm default values
@@ -14,7 +14,7 @@ def default_params_dict(forecast_length: int) -> dict:
     }
     token_model_params_dict = {
         "model": "constant",
-        "P0": 0.08,
+        "P0": yf.download('QRDO-USD')['Close'].iloc[-1],
         "drift": None,
         "sigma": None,
         "dt": 1 / 365,
