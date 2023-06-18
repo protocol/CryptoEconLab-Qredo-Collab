@@ -150,7 +150,7 @@ class NumTransactions:
             self.N_trx_list.append(self.N_trx_constant)
         elif self.model == "linear":
             self.N_trx_list.append(
-                int(self.rate * len(self.N_trx_list) + self.N_trx_constant)
+                max(int(self.rate * len(self.N_trx_list) + self.N_trx_constant),0)
             )
         elif self.model == "scheduled":
             self.N_trx_list.append(self.schedule[len(self.N_trx_list)])
