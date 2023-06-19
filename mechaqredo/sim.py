@@ -2,6 +2,7 @@ import os
 import itertools
 import pandas as pd
 from typing import List
+from tqdm import tqdm
 
 from .params import validate_params_dict, default_params_dict
 from .data_models import build_model_data_dict, build_model_data_dict_samples
@@ -29,7 +30,7 @@ def run_param_sweep_sim(
     sweep_df = pd.DataFrame()
     iter_tuple_list = list(itertools.product(*param_ranges_dict.values()))
     key_list = param_ranges_dict.keys()
-    for iter_tuple in iter_tuple_list:
+    for iter_tuple in tqdm(iter_tuple_list):
         # Build input parameters for sweep iteration
         iter_input_params_dict = input_params_dict.copy()
         for i, key in enumerate(key_list):
