@@ -119,6 +119,6 @@ def forecast_new_staker_inflow_vec(forecast_length: int, params_dict: dict) -> n
     if model == "constant":
         return np.array([init_stake_amt] * forecast_length)
     elif model == "linear":
-        return np.aaray([rate * t + init_stake_amt for t in range(forecast_length)])
+        return np.array([rate * t + init_stake_amt for t in range(forecast_length)])
     else:
         raise ValueError("Model provided is not valid")

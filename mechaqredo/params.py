@@ -2,6 +2,7 @@ import numpy as np
 import datetime as dt
 import yfinance as yf
 
+
 def default_params_dict(forecast_length: int) -> dict:
     # TODO: confirm default values
     ntxs_model_params_dict = {
@@ -14,7 +15,7 @@ def default_params_dict(forecast_length: int) -> dict:
     }
     token_model_params_dict = {
         "model": "constant",
-        "P0": yf.download('QRDO-USD')['Close'].iloc[-1],
+        "P0": 0.095,  # price at 2023/06/15
         "drift": None,
         "sigma": None,
         "dt": 1 / 365,
@@ -69,7 +70,7 @@ def default_params_dict(forecast_length: int) -> dict:
         "release_rate_function_type": "linear",
     }
     params_dict = {
-        "sim_start_datetime": dt.datetime(2023, 7, 15),
+        "sim_start_datetime": dt.datetime(2023, 6, 15),
         # User model params
         "ntxs_model": ntxs_model_params_dict,
         "token_price_model": token_model_params_dict,
@@ -79,9 +80,9 @@ def default_params_dict(forecast_length: int) -> dict:
         # Data params
         "previous_funds_vesting_spec": previous_funds_params_dict,
         "wallet_balances_vec": np.array([95_000_000.0]),
-        "circ_supply_zero": 360_000_000.0,
+        "circ_supply_zero": 339_000_000.0,
         "ecosystem_fund_zero": 110_000_000.0,  # we are assuming this fund gets an accelerated vesting!
-        "ecosystem_fund_to_vest_zero": 55_000_000.0,
+        "ecosystem_fund_to_vest_zero": 57_000_000.0,
         # User behavior params
         "protocol_funded_rate": 0.5,
         "initial_stake_convertion_rate": 0.7,
