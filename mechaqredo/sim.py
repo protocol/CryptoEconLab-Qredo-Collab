@@ -7,13 +7,17 @@ from .data_models import build_model_data_dict, build_model_data_dict_samples
 from .supply import forecast_supply_stats
 
 
+import os
+
 def run_param_sweep_sim(
     forecast_length: int,
     input_params_dict: dict,
     param_ranges_dict: dict,
     data_dict_n_samples: int = 1,
     data_dict_list_file: str = None,
-) -> pd.DataFrame:
+    output_dir: str = 'data',
+    save=False,
+    scenario='base') -> pd.DataFrame:
     # Validate input parameters
     params_dict = validate_params_dict(forecast_length, input_params_dict)
     # Generate/Load list of data dicts
@@ -24,7 +28,7 @@ def run_param_sweep_sim(
     else:
         with open(data_dict_list_file, "rb") as fp:
             data_dict_list = pickle.load(fp)
-    # Run params sweep
+    # Initialize sweep DataFrame
     sweep_df = pd.DataFrame()
     iter_tuple_list = list(itertools.product(*param_ranges_dict.values()))
     key_list = param_ranges_dict.keys()
@@ -36,6 +40,7 @@ def run_param_sweep_sim(
         # Validate input parameters
         params_dict = validate_params_dict(forecast_length, iter_input_params_dict)
         # For each data dict:
+        ii=0
         for data_dict in data_dict_list:
             # Forecast supply stats
             supply_data_dict = forecast_supply_stats(
@@ -47,7 +52,14 @@ def run_param_sweep_sim(
                 iter_df[key] = iter_tuple[i]
             # Append iter df to sweep df
             sweep_df = pd.concat([sweep_df, iter_df], ignore_index=True)
+            # Save item_df to a file
+            if save:
+                item_df_filename = f"{scenario}_{iter_tuple}_sim_{ii}.csv"
+                item_df_filepath = os.path.join(output_dir, item_df_filename)
+                iter_df.to_csv(item_df_filepath, index=False)
+            ii+=1
     return sweep_df
+
 
 
 def run_single_sim(forecast_length: int, input_params_dict: dict) -> pd.DataFrame:

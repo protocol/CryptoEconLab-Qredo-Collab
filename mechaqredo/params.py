@@ -62,11 +62,11 @@ def default_params_dict(forecast_length: int) -> dict:
         },
     }
     release_rate_params_dict = {
-        "release_rate_a": 0.3,
+        "release_rate_a": 0.5,
         "release_rate_b": 1,
         "max_validators": 200,
         "max_TVL": 2e9,
-        "release_rate_function_type": "fractional",
+        "release_rate_function_type": "linear",
     }
     params_dict = {
         "sim_start_datetime": dt.datetime(2023, 7, 15),
