@@ -83,6 +83,6 @@ if __name__ == "__main__":
     import timeit
 
     start = timeit.default_timer()
-    df = run_single_sim(365, default_params_dict(365))
+    df = run_single_sim(365 * 2, default_params_dict(365 * 2))
     stop = timeit.default_timer()
     print("Run time for single sim: ", stop - start)
