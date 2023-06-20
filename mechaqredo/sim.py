@@ -27,7 +27,7 @@ def run_param_sweep_sim(
             data_dict_n_samples, forecast_length, params_dict
         )
     # Initialize sweep DataFrame
-    sweep_df = pd.DataFrame()
+    sweep_df_list = []
     iter_tuple_list = list(itertools.product(*param_ranges_dict.values()))
     key_list = param_ranges_dict.keys()
     for iter_tuple in tqdm(iter_tuple_list):
@@ -36,26 +36,27 @@ def run_param_sweep_sim(
         for i, key in enumerate(key_list):
             iter_input_params_dict[key] = iter_tuple[i]
         # Validate input parameters
-        params_dict = validate_params_dict(forecast_length, iter_input_params_dict)
+        iter_params_dict = validate_params_dict(forecast_length, iter_input_params_dict)
         # For each data dict:
         ii = 0
         for data_dict in data_dict_list:
             # Forecast supply stats
             supply_data_dict = forecast_supply_stats(
-                forecast_length, params_dict, data_dict
+                forecast_length, iter_params_dict, data_dict
             )
             # Build output dataframe
             iter_df = build_output_dataframe(data_dict, supply_data_dict)
             for i, key in enumerate(key_list):
                 iter_df[key] = iter_tuple[i]
-            # Append iter df to sweep df
-            sweep_df = pd.concat([sweep_df, iter_df], ignore_index=True)
+            # Append iter df to sweep df list
+            sweep_df_list.append(iter_df)
             # Save item_df to a file
             if save:
                 item_df_filename = f"{file_name}_{iter_tuple}_sim_{ii}.csv"
                 item_df_filepath = os.path.join(output_dir, item_df_filename)
                 iter_df.to_csv(item_df_filepath, index=False)
             ii += 1
+    sweep_df = pd.concat(sweep_df_list, ignore_index=True)
     return sweep_df
 
 
