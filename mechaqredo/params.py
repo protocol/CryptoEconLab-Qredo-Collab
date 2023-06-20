@@ -1,6 +1,5 @@
 import numpy as np
 import datetime as dt
-import yfinance as yf
 
 
 def default_params_dict(forecast_length: int) -> dict:

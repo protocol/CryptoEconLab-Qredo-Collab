@@ -59,9 +59,10 @@ def generate_staking_scenario(
         new_params_dict["rewards_reinvest_rate"] = 0.3
         new_params_dict["staking_renewal_rate"] = 0.6
     elif scenario == "base":
-        new_params_dict["initial_stake_convertion_rate"] = 0.5
+        new_params_dict["initial_stake_convertion_rate"] = 0.6
         new_params_dict["rewards_reinvest_rate"] = 0.5
-        new_params_dict["staking_renewal_rate"] = 0.8
+        new_params_dict["staking_renewal_rate"] = 1.0
+        new_params_dict["new_staker_inflow_model"]["init_stake_amt"] = 0.0
     elif scenario == "good":
         new_params_dict["initial_stake_convertion_rate"] = 0.7
         new_params_dict["rewards_reinvest_rate"] = 0.7
@@ -71,15 +72,15 @@ def generate_staking_scenario(
         new_params_dict["rewards_reinvest_rate"] = 1.0
         new_params_dict["staking_renewal_rate"] = 0.9
     elif scenario == "pessimistic":
-        new_params_dict["initial_stake_convertion_rate"] = 0.3
+        new_params_dict["initial_stake_convertion_rate"] = 0.4
         new_params_dict["rewards_reinvest_rate"] = 0.0
-        new_params_dict["staking_renewal_rate"] = 0.5
+        new_params_dict["staking_renewal_rate"] = 0.6
         new_params_dict["new_staker_inflow_model"]["init_stake_amt"] = 0.0
     elif scenario == "optimistic":
-        new_params_dict["initial_stake_convertion_rate"] = 0.9
+        new_params_dict["initial_stake_convertion_rate"] = 0.8
         new_params_dict["rewards_reinvest_rate"] = 1.0
         new_params_dict["staking_renewal_rate"] = 1.0
-        new_params_dict["new_staker_inflow_model"]["init_stake_amt"] = 1_000_000.0
+        new_params_dict["new_staker_inflow_model"]["init_stake_amt"] = 200_000.0
     return new_params_dict
 
 
