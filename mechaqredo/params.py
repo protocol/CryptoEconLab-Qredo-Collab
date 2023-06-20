@@ -37,7 +37,7 @@ def default_params_dict(forecast_length: int) -> dict:
     }
     new_staker_inflow_params_dict = {
         "model": "constant",
-        "init_stake_amt": 1000.0,
+        "init_stake_amt": 100_000.0,
         "rate": None,
     }
     previous_funds_params_dict = {
@@ -94,7 +94,7 @@ def default_params_dict(forecast_length: int) -> dict:
         "release_rate_b": 1,
         "max_validators": 50,
         "max_TVL": 2000 * 0.7,
-        "max_rate": 0.5,
+        "max_rate": 0.0008,  # (1-max_rate)**(2*365)>0.5, i.e. two max to half the fund value
         "release_rate_function_type": "fractional",
         # Tokenomic params to check later
         "public_goods_fund_size": 200_000_000,

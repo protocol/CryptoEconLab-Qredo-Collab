@@ -8,7 +8,15 @@ Created on Sun Jun 18 17:11:14 2023
 from typing import Dict, Any
 
 # Constants
-SCENARIOS = ["very bad", "bad", "base", "good", "very good"]
+SCENARIOS = [
+    "very bad",
+    "bad",
+    "base",
+    "good",
+    "very good",
+    "pessimistic",
+    "optimistic",
+]
 # Define type hints for the params_dict
 ParamsDict = Dict[str, Any]
 
@@ -53,7 +61,7 @@ def generate_staking_scenario(
     elif scenario == "base":
         new_params_dict["initial_stake_convertion_rate"] = 0.5
         new_params_dict["rewards_reinvest_rate"] = 0.5
-        new_params_dict["staking_renewal_rate"] = 0.7
+        new_params_dict["staking_renewal_rate"] = 0.8
     elif scenario == "good":
         new_params_dict["initial_stake_convertion_rate"] = 0.7
         new_params_dict["rewards_reinvest_rate"] = 0.7
@@ -62,6 +70,16 @@ def generate_staking_scenario(
         new_params_dict["initial_stake_convertion_rate"] = 0.9
         new_params_dict["rewards_reinvest_rate"] = 1.0
         new_params_dict["staking_renewal_rate"] = 0.9
+    elif scenario == "pessimistic":
+        new_params_dict["initial_stake_convertion_rate"] = 0.3
+        new_params_dict["rewards_reinvest_rate"] = 0.0
+        new_params_dict["staking_renewal_rate"] = 0.5
+        new_params_dict["new_staker_inflow_model"]["init_stake_amt"] = 0.0
+    elif scenario == "optimistic":
+        new_params_dict["initial_stake_convertion_rate"] = 0.9
+        new_params_dict["rewards_reinvest_rate"] = 1.0
+        new_params_dict["staking_renewal_rate"] = 1.0
+        new_params_dict["new_staker_inflow_model"]["init_stake_amt"] = 1_000_000.0
     return new_params_dict
 
 
@@ -89,6 +107,8 @@ def generate_n_trx_scenario(
         "base": N_trx_constant,
         "good": N_trx_constant / 365,
         "very good": 2 * N_trx_constant / 365,
+        "pessimistic": -0.75 * N_trx_constant / 365,
+        "optimistic": 2 * N_trx_constant / 365,
     }
     params_dict["ntxs_model"]["rate"] = rates[scenario]
     if scenario == "base":
@@ -153,6 +173,8 @@ def generate_price_or_fee_scenario(
         "base": 0.0,
         "good": max_drift / 2,
         "very good": max_drift,
+        "pessimistic": -2.0,
+        "optimistic": 2,
     }
     params_dict[model_name]["sigma"] = volatility
     params_dict[model_name]["model"] = "gbm"
