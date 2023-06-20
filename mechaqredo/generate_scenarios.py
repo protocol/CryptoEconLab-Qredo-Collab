@@ -174,7 +174,7 @@ def generate_price_or_fee_scenario(
         "good": max_drift / 2,
         "very good": max_drift,
         "pessimistic": -2.0,
-        "optimistic": 2,
+        "optimistic": 1,
     }
     params_dict[model_name]["sigma"] = volatility
     params_dict[model_name]["model"] = "gbm"
