@@ -92,13 +92,13 @@ def default_params_dict(forecast_length: int) -> dict:
         "release_rate_a": 0.5,
         "release_rate_b": 1,
         "max_validators": 50,
-        "max_TVL": 2000 * 0.7,
+        "max_TVL": (2000-350) * 0.7,
         "max_rate": 0.0008,  # (1-max_rate)**(2*365)>0.5, i.e. two max to half the fund value
         "release_rate_function_type": "fractional",
         # Tokenomic params to check later
-        "public_goods_fund_size": 200_000_000,
-        "staking_rewards_fund_size": 200_000_000,
-        "treasury_refresh_size": 250_000_000,  # the "development fund"
+        "public_goods_fund_size": 50_000_000,
+        "staking_rewards_fund_size": 200_000_000+75_000_000,
+        "treasury_refresh_size": 250_000_000+75_000_000,  # the "development fund"
         "burn_extra_vec": np.array([350_000_000] + [0] * (forecast_length - 1)),
     }
     return params_dict
