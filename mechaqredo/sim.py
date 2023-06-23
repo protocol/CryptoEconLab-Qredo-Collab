@@ -3,7 +3,7 @@ import itertools
 import pandas as pd
 from typing import List
 from tqdm import tqdm
-
+import numpy as np
 from .params import validate_params_dict, default_params_dict
 from .data_models import build_model_data_dict, build_model_data_dict_samples
 from .supply import forecast_supply_stats
@@ -58,6 +58,51 @@ def run_param_sweep_sim(
             ii += 1
     sweep_df = pd.concat(sweep_df_list, ignore_index=True)
     return sweep_df
+
+
+
+def get_single_derivative(forecast_length: int,
+                          with_respect_to:str,
+                          input_params_dict: dict,
+                          seed:int,
+                          h:float=None) -> pd.DataFrame:
+    ''' gets an evaluation of a derivative using finite differences'''
+    
+    if h is None:
+        h=input_params_dict[with_respect_to]*0.01
+    
+    np.random.seed(seed)
+    df0=run_single_sim(forecast_length, input_params_dict)
+    np.random.seed(seed)
+    input_params_dict[with_respect_to]+=h
+    df1=run_single_sim(forecast_length, input_params_dict)
+    single_derivative=(df1-df0)/h
+    input_params_dict[with_respect_to]+=-h
+    return single_derivative
+
+
+def estimate_sensitivity(forecast_length: int,
+                          with_respect_to:str,
+                          input_params_dict: dict,
+                          h:float=None,
+                          N=100) -> pd.DataFrame:
+    ''' computes the monte carlo estimate of the sensitivity'''
+    
+
+    d=get_single_derivative(forecast_length,
+                              with_respect_to,
+                              input_params_dict,0,h)
+    print(f'Estimating sensitivity wrt {with_respect_to}')
+    for i in range(1,N+1):
+        d+=get_single_derivative(forecast_length,
+                                  with_respect_to,
+                                  input_params_dict,i,h)
+    
+    return d/N
+        
+    
+    
+
 
 
 def run_single_sim(forecast_length: int, input_params_dict: dict) -> pd.DataFrame:
