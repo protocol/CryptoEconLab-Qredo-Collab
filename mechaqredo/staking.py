@@ -93,29 +93,16 @@ def compute_initial_staking_value(params_dict: dict) -> float:
 def release_rate_function(tvl: float, n_val: int, params_dict: dict) -> float:
     tvl_millions = tvl / 2e6
     # Get parameters
-    function_type = params_dict["release_rate_function_type"]
     a = params_dict["release_rate_a"]
     b = params_dict["release_rate_b"]
-    V_max = params_dict["max_validators"]
-    T_max = params_dict["max_TVL"]
+    V_target = params_dict["max_validators"]
+    T_target = params_dict["max_TVL"]
     max_rate = params_dict["max_rate"]
     # Compute rate
-    if function_type == "linear":
-        r = a * tvl_millions / T_max + (1 - a) * n_val / V_max
-    elif function_type == "sigmoid":
-        r = (
-            2
-            * (1 / (1 + np.exp(-a * tvl_millions - b * n_val)) - 0.5)
-            * (tvl_millions > 0)
-            * (n_val > 0)
-        )
-    elif function_type == "fractional":
-        r = (tvl_millions**a + b * n_val**a) / (T_max**a + b * V_max**a)
-    elif function_type == "fractional_convex":
-        term1 = (tvl_millions / T_max) ** a
-        term2 = (n_val / V_max) ** b
-        r = 0.5 * term1 + 0.5 * term2
-    return max_rate * r
+    T_factor = np.minimum(1, tvl_millions / V_target) ** a
+    V_factor = np.minimum(1, n_val / T_target) ** a
+    r = max_rate * (b * T_factor + (1 - b) * V_factor)
+    return r
 
 
 def forecast_new_staker_inflow_vec(forecast_length: int, params_dict: dict) -> np.array:
