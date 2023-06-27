@@ -92,7 +92,7 @@ def default_params_dict(forecast_length: int) -> dict:
         "previous_funds_vesting_spec": previous_funds_params_dict,
         "wallet_balances_vec": np.array([95_000_000.0]),
         "circ_supply_zero": 339_000_000.0,
-        "ecosystem_fund_zero": 57_000_000.0,  # we are assuming this fund gets an accelerated vesting!
+        "ecosystem_fund_zero": 55_000_000.0,  # we are assuming this fund gets an accelerated vesting!
         # User behavior params
         "protocol_funded_rate": 0.5,
         "initial_stake_convertion_rate": 0.7,

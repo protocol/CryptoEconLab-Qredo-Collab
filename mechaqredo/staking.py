@@ -20,7 +20,9 @@ def forecast_staking_stats(
     staking_inflows_list = [initial_staking_value]
     staking_outflows_list = [0.0]
     staking_tvl_list = [initial_staking_value]
-    ecosystem_fund_list = [params_dict["ecosystem_fund_zero"]]
+    ecosystem_fund_list = [
+        params_dict["ecosystem_fund_zero"] + params_dict["ecosystem_refresh_size"]
+    ]
     staking_released_rewards_list = [0.0]
     total_staking_rewards_list = [0.0]
     available_for_outflow_vec = [0.0]
