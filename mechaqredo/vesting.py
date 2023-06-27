@@ -54,10 +54,10 @@ def linear_vest(
     vest_end_date = fund_spec_dict["vest_end_date"]
     vest_amount = fund_spec_dict["vest_amount"]
     vest_zero = fund_spec_dict["vest_zero"]
-    vesting_days = (vest_end_date - sim_start).days
     vest_vec = np.zeros(forecast_length, dtype=float)
     vest_vec[0] = vest_zero
     if vest_amount is not None:
+        vesting_days = (vest_end_date - sim_start).days
         for i in range(vesting_days, 0, -vest_period_days):
             if i < forecast_length:
                 vest_vec[i] = vest_amount

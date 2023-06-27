@@ -97,7 +97,7 @@ def release_rate_function(tvl: float, n_val: int, params_dict: dict) -> float:
     b = params_dict["release_rate_b"]
     V_target = params_dict["max_validators"]
     T_target = params_dict["max_TVL"]
-    max_rate = params_dict["max_rate"]
+    max_rate = params_dict["release_rate_max"]
     # Compute rate
     T_factor = np.minimum(1, tvl_millions / V_target) ** a
     V_factor = np.minimum(1, n_val / T_target) ** a
