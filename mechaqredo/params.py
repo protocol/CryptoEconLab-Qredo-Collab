@@ -27,6 +27,7 @@ def default_params_dict(forecast_length: int) -> dict:
         "sigma": None,
         "dt": 1 / 365,
         "theta": None,
+        "defined_path": None,
     }
     n_val_model_params_dict = {
         "rate": (18 - 6) / 730,
@@ -44,21 +45,39 @@ def default_params_dict(forecast_length: int) -> dict:
             "vest_period_days": 7,
             "vest_end_date": dt.datetime(2024, 7, 14),
             "vest_amount": 160_230.04,
+            "vest_zero": 0.0,
         },
         "team_quarterly": {
             "vest_period_days": 91,
             "vest_end_date": dt.datetime(2026, 1, 14),
             "vest_amount": 1_976_405.65,
+            "vest_zero": 0.0,
         },
         "investors_and_others": {
             "vest_period_days": 7,
             "vest_end_date": dt.datetime(2026, 1, 14),
             "vest_amount": 3_018_335.60,
+            "vest_zero": 0.0,
         },
         "treasury": {
             "vest_period_days": 7,
             "vest_end_date": dt.datetime(2026, 1, 14),
             "vest_amount": 161_596.15,
+            "vest_zero": 0.0,
+        },
+    }
+    new_funds_params_dict = {
+        "public_goods": {
+            "vest_period_days": None,
+            "vest_end_date": None,
+            "vest_amount": None,
+            "vest_zero": 50_000_000,
+        },
+        "treasury_refresh": {  # the "development fund"
+            "vest_period_days": None,
+            "vest_end_date": None,
+            "vest_amount": None,
+            "vest_zero": 250_000_000,
         },
     }
     params_dict = {
@@ -73,8 +92,7 @@ def default_params_dict(forecast_length: int) -> dict:
         "previous_funds_vesting_spec": previous_funds_params_dict,
         "wallet_balances_vec": np.array([95_000_000.0]),
         "circ_supply_zero": 339_000_000.0,
-        "ecosystem_fund_zero": 110_000_000.0,  # we are assuming this fund gets an accelerated vesting!
-        "ecosystem_fund_to_vest_zero": 57_000_000.0,
+        "ecosystem_fund_zero": 57_000_000.0,  # we are assuming this fund gets an accelerated vesting!
         # User behavior params
         "protocol_funded_rate": 0.5,
         "initial_stake_convertion_rate": 0.7,
@@ -92,14 +110,13 @@ def default_params_dict(forecast_length: int) -> dict:
         "release_rate_a": 0.5,
         "release_rate_b": 1,
         "max_validators": 50,
-        "max_TVL": (2000-350) * 0.7,
-        "max_rate": 0.0008,  # (1-max_rate)**(2*365)>0.5, i.e. two max to half the fund value
-        "release_rate_function_type": "fractional",
-        # Tokenomic params to check later
-        "public_goods_fund_size": 50_000_000,
-        "staking_rewards_fund_size": 200_000_000+75_000_000,
-        "treasury_refresh_size": 250_000_000+75_000_000,  # the "development fund"
-        "burn_extra_vec": np.array([350_000_000] + [0] * (forecast_length - 1)),
+        "max_TVL": (2000 - 140 - 160) * 0.7,
+        "release_rate_max": 0.0008,  # (1-max_rate)**(2*365)>0.5, i.e. two max to half the fund value
+        # Allocation params
+        "new_funds_vesting_spec": new_funds_params_dict,
+        "staking_rewards_fund_size": 250_000_000,
+        "ecosystem_refresh_size": 290_000_000,
+        "burn_extra_vec": np.array([160_000_000] + [0] * (forecast_length - 1)),
     }
     return params_dict
 

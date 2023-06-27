@@ -24,6 +24,16 @@ def forecast_vested_vec_from_staking(forecast_length: int, params_dict: dict):
     return vested_vec
 
 
+def forecast_vested_vec_from_new_allocation(
+    forecast_length: int, params_dict: dict
+) -> np.array:
+    sim_start = params_dict["sim_start_datetime"]
+    vested_vec = build_linear_vesting_vec(
+        sim_start, forecast_length, params_dict["new_funds_vesting_spec"]
+    )
+    return vested_vec
+
+
 def build_linear_vesting_vec(
     sim_start: dt.datetime, forecast_length: int, fund_params_dict: dict
 ) -> np.array:
@@ -43,9 +53,12 @@ def linear_vest(
     vest_period_days = fund_spec_dict["vest_period_days"]
     vest_end_date = fund_spec_dict["vest_end_date"]
     vest_amount = fund_spec_dict["vest_amount"]
+    vest_zero = fund_spec_dict["vest_zero"]
     vesting_days = (vest_end_date - sim_start).days
     vest_vec = np.zeros(forecast_length, dtype=float)
-    for i in range(vesting_days, 0, -vest_period_days):
-        if i < forecast_length:
-            vest_vec[i] = vest_amount
+    vest_vec[0] = vest_zero
+    if vest_amount is not None:
+        for i in range(vesting_days, 0, -vest_period_days):
+            if i < forecast_length:
+                vest_vec[i] = vest_amount
     return vest_vec

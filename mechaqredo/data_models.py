@@ -71,8 +71,9 @@ def forecast_service_fees(forecast_length: int, params_dict: dict) -> np.array:
         fees_params_dict["sigma"],
         fees_params_dict["dt"],
         fees_params_dict["theta"],
+        fees_params_dict["defined_path"],
     )
-    for i in range(forecast_length - 1):
+    for i in range(forecast_length):
         fees_model.update()
     fees_vec = np.array(fees_model.fees_list)
     return fees_vec

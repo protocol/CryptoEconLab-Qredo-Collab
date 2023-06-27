@@ -60,49 +60,41 @@ def run_param_sweep_sim(
     return sweep_df
 
 
-
-def get_single_derivative(forecast_length: int,
-                          with_respect_to:str,
-                          input_params_dict: dict,
-                          seed:int,
-                          h:float=None) -> pd.DataFrame:
-    ''' gets an evaluation of a derivative using finite differences'''
-    
+def get_single_derivative(
+    forecast_length: int,
+    with_respect_to: str,
+    input_params_dict: dict,
+    seed: int,
+    h: float = None,
+) -> pd.DataFrame:
+    """gets an evaluation of a derivative using finite differences"""
+    params_dict = input_params_dict.copy()
     if h is None:
-        h=input_params_dict[with_respect_to]*0.01
-    
+        h = params_dict[with_respect_to] * 0.01
     np.random.seed(seed)
-    df0=run_single_sim(forecast_length, input_params_dict)
+    df0 = run_single_sim(forecast_length, params_dict)
     np.random.seed(seed)
-    input_params_dict[with_respect_to]+=h
-    df1=run_single_sim(forecast_length, input_params_dict)
-    single_derivative=(df1-df0)/h
-    input_params_dict[with_respect_to]+=-h
+    params_dict[with_respect_to] += h
+    df1 = run_single_sim(forecast_length, params_dict)
+    single_derivative = (df1 - df0) / h
     return single_derivative
 
 
-def estimate_sensitivity(forecast_length: int,
-                          with_respect_to:str,
-                          input_params_dict: dict,
-                          h:float=None,
-                          N=100) -> pd.DataFrame:
-    ''' computes the monte carlo estimate of the sensitivity'''
-    
-
-    d=get_single_derivative(forecast_length,
-                              with_respect_to,
-                              input_params_dict,0,h)
-    print(f'Estimating sensitivity wrt {with_respect_to}')
-    for i in range(1,N+1):
-        d+=get_single_derivative(forecast_length,
-                                  with_respect_to,
-                                  input_params_dict,i,h)
-    
-    return d/N
-        
-    
-    
-
+def estimate_sensitivity(
+    forecast_length: int,
+    with_respect_to: str,
+    input_params_dict: dict,
+    h: float = None,
+    N=100,
+) -> pd.DataFrame:
+    """computes the monte carlo estimate of the sensitivity"""
+    d = get_single_derivative(forecast_length, with_respect_to, input_params_dict, 0, h)
+    print(f"Estimating sensitivity wrt {with_respect_to}")
+    for i in range(1, N + 1):
+        d += get_single_derivative(
+            forecast_length, with_respect_to, input_params_dict, i, h
+        )
+    return d / N
 
 
 def run_single_sim(forecast_length: int, input_params_dict: dict) -> pd.DataFrame:
@@ -130,6 +122,7 @@ if __name__ == "__main__":
     import timeit
 
     start = timeit.default_timer()
-    df = run_single_sim(365 * 2, default_params_dict(365 * 2))
+    l = 365 * 2
+    df = run_single_sim(l, default_params_dict(l))
     stop = timeit.default_timer()
     print("Run time for single sim: ", stop - start)

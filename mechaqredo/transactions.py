@@ -20,6 +20,7 @@ class ServiceFees:
         sigma: float = None,
         dt: float = 1 / 365,
         theta: float = None,
+        defined_path: np.array = None,
     ):
         """
         Constructor of the ServiceFees class.
@@ -46,22 +47,35 @@ class ServiceFees:
         self.a = a
         self.drift = drift
         self.sigma = sigma
-        self.fees_list = [A0]
+        self.fees_list = []
+        self.A0 = A0
         self.dt = dt
         self.theta = theta
+        self.defined_path = defined_path
 
     def update(self):
         """
         Update the service fees based on the chosen model.
         """
-        if self.model == "constant":
-            self.fees_list.append(self.fees_list[-1])
-        elif self.model == "linear":
-            self.fees_list.append(self.a * len(self.fees_list) + self.fees_list[0])
-        elif self.model == "gbm":
-            self.fees_list.append(self._gbm())
-        elif self.model == "ou":
-            self.fees_list.append(self._ou())
+        if self.model != "defined_path":
+            if len(self.fees_list) == 0:
+                self.fees_list.append(self.A0)
+            else:
+                if self.model == "constant":
+                    self.fees_list.append(self.fees_list[-1])
+                elif self.model == "linear":
+                    self.fees_list.append(
+                        self.a * len(self.fees_list) + self.fees_list[0]
+                    )
+                elif self.model == "gbm":
+                    self.fees_list.append(self._gbm())
+                elif self.model == "ou":
+                    self.fees_list.append(self._ou())
+        else:
+            i = min(len(self.fees_list), len(self.defined_path))
+            base_fee = self.defined_path[i]
+            random_noise = self.sigma * np.random.standard_normal()
+            self.fees_list.append(base_fee + random_noise)
 
     def _gbm(self):
         """
@@ -150,7 +164,7 @@ class NumTransactions:
             self.N_trx_list.append(self.N_trx_constant)
         elif self.model == "linear":
             self.N_trx_list.append(
-                max(int(self.rate * len(self.N_trx_list) + self.N_trx_constant),0)
+                max(int(self.rate * len(self.N_trx_list) + self.N_trx_constant), 0)
             )
         elif self.model == "scheduled":
             self.N_trx_list.append(self.schedule[len(self.N_trx_list)])
