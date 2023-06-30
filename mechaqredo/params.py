@@ -10,7 +10,7 @@ def default_params_dict(forecast_length: int) -> dict:
         "distr": None,
         "fun": None,
         "rate": None,
-        "N_trx_constant": 8000.0,
+        "N_trx_constant": 1000.0,
     }
     token_model_params_dict = {
         "model": "constant",

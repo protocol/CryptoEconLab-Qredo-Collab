@@ -161,9 +161,9 @@ def generate_protocol_scenario(
 ) -> ParamsDict:
     new_params_dict = params_dict.copy()
     if scenario == "base":
-        new_params_dict["protocol_funded_rate"] = 0.5
+        new_params_dict["protocol_funded_rate"] = 0.4
     elif scenario == "pessimistic":
-        new_params_dict["protocol_funded_rate"] = 0.8
+        new_params_dict["protocol_funded_rate"] = 0.6
     elif scenario == "optimistic":
         new_params_dict["protocol_funded_rate"] = 0.2
     return new_params_dict
@@ -253,8 +253,8 @@ def generate_price_scenario(
         "base": 0.0,
         "good": max_drift / 2,
         "very good": max_drift,
-        "pessimistic": -1.0,
-        "optimistic": 1,
+        "pessimistic": -0.5,
+        "optimistic": 0.5,
     }
     params_dict["token_price_model"]["sigma"] = volatility
     params_dict["token_price_model"]["model"] = "gbm"
