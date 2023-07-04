@@ -38,7 +38,8 @@ def forecast_supply_stats(
     vested_vec = (
         vested_vec_from_previous + vested_vec_from_new + vested_vec_from_staking
     )
-    vested_vec[0] += vested_ecosystem_fund_zero
+    # Need to vest the burn extra and the ecosystem fund
+    vested_vec[0] += vested_ecosystem_fund_zero + burn_extra_vec.sum()
     # Forecast locked tokens from service fees
     service_fee_locked_vec = forecast_service_fee_locked_vec(
         params_dict,
